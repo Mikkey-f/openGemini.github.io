@@ -407,6 +407,7 @@ classDiagram
 ## Tracing system core module
 
 ```mermaid
+classDiagram
     class TraceContext {
         + traceId: String
         + parentTraceId: String

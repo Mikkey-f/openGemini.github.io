@@ -358,33 +358,39 @@ classDiagram
 拦截器模式定义了标准化接口，用于挂钩客户端操作（查询/写入）并注入遥测逻辑。
 
 ```mermaid
-Interceptor interface {
-	Query(ctx context.Context, query *InterceptorQuery) InterceptorClosure
-	Write(ctx context.Context, write *InterceptorWrite) InterceptorClosure
-}
+classDiagram
+    class Interceptor {
+        <<interface>>
+        + Query(ctx context.Context, query *InterceptorQuery) InterceptorClosure
+        + Write(ctx context.Context, write *InterceptorWrite) InterceptorClosure
+    }
 ```
 
 ## 定义基础客户端类，关联拦截器接口
 基础 Client 类管理一组拦截器，允许在客户端操作期间动态注册和执行拦截器逻辑。
 
 ```mermaid
-class Client {
-- []Interceptor interceptors
-}
+classDiagram
+    class Client {
+        - interceptors: List~Interceptor~
+    }
 ```
 
 ## 定义集成 OpenTelemetry 的拦截器实现类，实现 Interceptor 接口
 OtelClient 类实现 Interceptor 接口，嵌入 OpenTelemetry 逻辑以捕获客户端操作的跟踪、指标和日志。
 
 ```mermaid
-class OtelClient {
-    Interceptor
-}
+classDiagram
+    class OtelClient {
+        <<implements Interceptor>>
+    }
+    OtelClient ..|> Interceptor : implements
 ```
 
 ## 追踪系统核心模块
 
 ```mermaid
+classDiagram
     class TraceContext {
         + traceId: String
         + parentTraceId: String
@@ -492,7 +498,7 @@ class OtelClient {
 
 ## 使用示例(Go language examples)
 
-```mermaid
+```go
 func main() {
     var ctx = context.Background()
     shutdown, err := setupOtelSDK(ctx)
